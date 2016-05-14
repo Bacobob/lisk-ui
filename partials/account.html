@@ -1,6 +1,6 @@
 <div class="top-margin"></div>
 <div class="row">
-  <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+  <div class="col-md-6 col-sm-12 col-xs-12">
     <div class="panel widget widget-brown">
       <div class="lisk-icon"></div>
       <div class="panel-body">
@@ -9,19 +9,6 @@
         </div>
         <div class="wg-data">
           <span class="strong">{{balanceToShow[0] || 0}}<span class="small">{{balanceToShow[1]}}</span></span>&nbsp;LISK
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-    <div class="panel  widget widget-brown">
-      <div class="contacts-icon"></div>
-      <div class="panel-body">
-        <div class="wg-label">
-          {{'Contacts'|translate}}
-        </div>
-        <div class="wg-data">
-          <span class="strong">{{contacts.count}}</span><!-- <span ng-if="false" class="wg-legend new-contacts"><span>12 this week</span> --></span>
         </div>
       </div>
     </div>
@@ -39,7 +26,7 @@
       </div>
     </div>
   </div> -->
-  <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+  <div class="col-md-6 col-sm-12 col-xs-12">
     <div class="panel  widget widget-brown" ng-show="diffVersion!=-1">
       <div class="panel-body">
         <div class="wg-label">
@@ -99,10 +86,10 @@
               <a href="#" ng-click="transactionInfo(transaction)">{{transaction.id}}</a>
             </td>
             <td class="padding-in-1400">
-              <a href="#" ng-click="userInfo(transaction.senderId)">{{transaction.senderUsername || transaction.senderId}}</a>
+              <a href="#" ng-click="userInfo(transaction.senderId)">{{transaction.senderId}}</a>
             </td>
             <td ng-show="transaction.type &lt;= 1">
-              <a href="#" ng-click="userInfo(transaction.recipientId)">{{transaction.recipientUsername || transaction.recipientId}}</a>
+              <a href="#" ng-click="userInfo(transaction.recipientId)">{{transaction.recipientId}}</a>
             </td>
             <td ng-show="transaction.type &gt; 1"></td>
             <td>
@@ -133,7 +120,7 @@
         Return when you have forged at least 100 LISK
       </div>
       <div class="light-graph-body">
-        <canvas id="line" class="chart chart-line" data="graphs.liskPrice.data" colours="graphs.liskPrice.colours" labels="graphs.liskPrice.labels" legend="false" series="graphs.liskPrice.series" options="graphs.liskPrice.options"></canvas>
+        <canvas id="line" class="chart chart-line" chart-data="graphs.liskPrice.data" chart-colours="graphs.liskPrice.colours" chart-labels="graphs.liskPrice.labels" chart-legend="false" chart-series="graphs.liskPrice.series" chart-options="graphs.liskPrice.options"></canvas>
       </div>
       <div class="light-graph-footer">
         <div class="row">
@@ -149,7 +136,7 @@
         </div>
       </div>
     </div>
-  </div>--> 
+  </div>-->
   <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <div class="panel panel-default panel-list">
       <div class="panel-heading cursor">

@@ -7,17 +7,12 @@ angular.module('liskApp').controller('votedDelegatesController', ['$scope', '$ro
     $scope.view.loadingText = gettextCatalog.getString('Loading delegates');
     $scope.view.page = {title: gettextCatalog.getString('Forging'), previous: null};
     $scope.view.bar = {forgingMenu: true};
-    $scope.allVotes = 100 * 1000 * 1000 * 1000 * 1000 * 100;
 
     $scope.count = 0;
 
     $scope.address = userService.address;
     $scope.loading = true;
     $scope.showVotes = false;
-
-    $scope.getApproval = function (vote) {
-        return (vote / $scope.allVotes ) * 100;
-    };
 
     $scope.voteList = {
         list: {},
@@ -83,10 +78,8 @@ angular.module('liskApp').controller('votedDelegatesController', ['$scope', '$ro
                     $scope.unconfirmedTransactions.list = [];
                     response.data.transactions.forEach(function (transaction) {
                         $scope.unconfirmedTransactions.list = $scope.unconfirmedTransactions.list.concat(transaction.asset.votes);
-
                     });
                 });
-
         },
         inList: function (publicKey) {
             return this.list.indexOf('-' + publicKey) != -1;
@@ -94,7 +87,6 @@ angular.module('liskApp').controller('votedDelegatesController', ['$scope', '$ro
     };
     $scope.unconfirmedTransactions.getList();
     // end Unconfirmed transactions
-
 
     // My deletates
     $scope.tableMyDelegates = new ngTableParams({

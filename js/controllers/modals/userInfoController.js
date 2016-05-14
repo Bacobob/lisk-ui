@@ -20,40 +20,45 @@ angular.module('liskApp').controller('userInfoController', ["$scope", "$http", "
             return;
         }
         $scope.userIdOld = userId;
-        $scope.transactions = {view: false, list: [1]};
-        $http.get("/api/accounts", {params: {address: userId}})
-            .then(function (resp) {
+        $scope.transactions = { view: false, list: [] };
+        $http.get("/api/accounts", { params: { address: userId }})
+        .then(function (resp) {
+            if (resp.data.account) {
                 $scope.account = resp.data.account;
-                    $http.get("/api/transactions", {
-                        params: {
-                            senderPublicKey: $scope.account.publicKey,
-                            recipientId: $scope.account.address,
-                            limit: 6,
-                            orderBy: 't_timestamp:desc'
-                        }
-                    })
-                        .then(function (resp) {
-                            var transactions = resp.data.transactions;
+            } else {
+                $scope.account = { address: userId, publicKey: null };
+            }
+            $http.get("/api/transactions", {
+                params: {
+                    senderPublicKey: $scope.account.publicKey,
+                    recipientId: $scope.account.address,
+                    limit: 6,
+                    orderBy: 't_timestamp:desc'
+                }
+            })
+            .then(function (resp) {
+                var transactions = resp.data.transactions;
 
-                            $http.get('/api/transactions/unconfirmed', {
-                                params: {
-                                    senderPublicKey: $scope.account.publicKey,
-                                    address: $scope.account.address
-                                }
-                            })
-                                .then(function (resp) {
-                                    var unconfirmedTransactions = resp.data.transactions;
-                                    $scope.transactions.list = unconfirmedTransactions.concat(transactions).slice(0, 6);
-                                });
-                        });
+                $http.get('/api/transactions/unconfirmed', {
+                    params: {
+                        senderPublicKey: $scope.account.publicKey,
+                        address: $scope.account.address
+                    }
+                })
+                .then(function (resp) {
+                    var unconfirmedTransactions = resp.data.transactions;
+                    $scope.transactions.list = unconfirmedTransactions.concat(transactions).slice(0, 6);
+                });
             });
+        });
     }
 
-    $scope.transactions = {view: false, list: [1]};
+    $scope.transactions = { view: false, list: [] };
 
     $scope.toggleTransactions = function () {
         $scope.transactions.view = !$scope.transactions.view;
     }
+
     $scope.close = function () {
         userInfo.deactivate();
     }

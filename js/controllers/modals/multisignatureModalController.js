@@ -3,7 +3,7 @@ require('angular');
 angular.module('liskApp').controller('multisignatureModalController', ["$scope", "$http", "multisignatureModal", "viewFactory", "userService", 'gettextCatalog', function ($scope, $http, multisignatureModal, viewFactory, userService, gettextCatalog) {
 
     $scope.view = viewFactory;
-    $scope.view.loadingText = gettextCatalog.getString('Set members of account');
+    $scope.view.loadingText = gettextCatalog.getString('Configuring multi-signature group');
     $scope.secondPassphrase = userService.secondPassphrase;
     $scope.rememberedPassphrase = userService.rememberPassphrase ? userService.rememberedPassphrase : false;
     $scope.authData = {
@@ -12,6 +12,8 @@ angular.module('liskApp').controller('multisignatureModalController', ["$scope",
     }
     $scope.addingError = '';
     $scope.currentAddress = userService.address;
+    $scope.fee = 5;
+
     $scope.close = function () {
         if ($scope.destroy) {
             $scope.destroy(false);
@@ -20,7 +22,6 @@ angular.module('liskApp').controller('multisignatureModalController', ["$scope",
     }
 
     $scope.step = 1;
-
     $scope.totalCount = 0;
     $scope.sign = 2;
 
@@ -29,7 +30,7 @@ angular.module('liskApp').controller('multisignatureModalController', ["$scope",
         if ($scope.totalCount) {
             $scope.step = 3;
         } else {
-            $scope.addingError = 'Please add at least one additional member to create a multi signature account';
+            $scope.addingError = 'Please add at least one additional member to create a multi-signature group';
         }
     }
 
@@ -40,83 +41,60 @@ angular.module('liskApp').controller('multisignatureModalController', ["$scope",
         $scope.totalCount = $scope.totalCount - 1;
     }
 
-    $scope.addMember = function (contact) {
+    $scope.addMember = function (member) {
         $scope.addingError = '';
         var isAddress = /^[0-9]+[L|l]$/g;
-        var allowSymbols = /^[a-z0-9!@$&_.]+$/g;
-        var correctAddress = isAddress.test(contact);
-        var correctName = allowSymbols.test(contact.toLowerCase());
-        if ($scope.contact.trim() == '') {
-            $scope.addingError = 'Empty contact';
-            console.log($scope.addingError);
+        var correctAddress = isAddress.test(member);
+        if ($scope.member.trim() == '') {
+            $scope.addingError = 'Empty address';
         } else {
             var Buffer = require('buffer/').Buffer;
             var buffer =  []
             try {
-                buffer = Buffer(contact, "hex")}
+                buffer = Buffer(member, "hex")}
             catch(err) {
 
             }
             if (buffer.length == 32) {
                 var lisk = require('lisk-js');
-                var address = lisk.crypto.getAddress($scope.contact);
-                if ($scope.members[$scope.contact] || address == userService.address) {
+                var address = lisk.crypto.getAddress($scope.member);
+                if ($scope.members[$scope.address] || address == userService.address) {
                     return;
                 }
-                $scope.members[$scope.contact] = {address: address, publicKey: $scope.contact};
+                $scope.members[$scope.member] = {address: address, publicKey: $scope.member};
                 $scope.totalCount = $scope.totalCount + 1;
-                $scope.contact = '';
+                $scope.member = '';
             } else {
-                if (correctAddress || correctName) {
-                    if (correctAddress) {
-                        $http.get("/api/accounts?address=" + contact).then(function (response) {
-                            if (response.data.success) {
-                                $scope.presendError = false;
-                                $scope.addingError = '';
-                                if ($scope.members[response.data.account.publicKey] || contact == userService.address) {
-                                    return;
-                                }
-                                $scope.members[response.data.account.publicKey] = response.data.account;
-                                $scope.totalCount = $scope.totalCount + 1;
-                                $scope.contact = '';
-                            } else {
-                                $scope.addingError = response.data.error;
-                                console.log($scope.addingError);
+                if (correctAddress) {
+                    $http.get("/api/accounts?address=" + member).then(function (response) {
+                        if (response.data.success) {
+                            $scope.presendError = false;
+                            $scope.addingError = '';
+                            if ($scope.members[response.data.account.publicKey] || member == userService.address) {
+                                return;
                             }
-                        });
-
-                    } else {
-                        $http.get("/api/accounts/username/get?username=" + encodeURIComponent(contact)).then(function (response) {
-                            if (response.data.success) {
-                                $scope.presendError = false;
-                                $scope.addingError = ''
-                                if ($scope.members[response.data.account.publicKey] || response.data.account.address == userService.address) {
-                                    return;
-                                }
-                                $scope.members[response.data.account.publicKey] = response.data.account;
-                                $scope.totalCount = $scope.totalCount + 1;
-                                $scope.contact = '';
-                            } else {
-                                $scope.addingError = response.data.error;
-                            }
-                        });
-                    }
-
+                            $scope.members[response.data.account.publicKey] = response.data.account;
+                            $scope.totalCount = $scope.totalCount + 1;
+                            $scope.member = '';
+                        } else {
+                            $scope.addingError = response.data.error;
+                        }
+                    });
                 } else {
-
-                    $scope.addingError = 'Incorrect contact name or address';
-                    console.log($scope.addingError);
+                    $scope.addingError = 'Incorrect address';
                 }
             }
-
         }
     }
 
     $scope.putMembers = function (fromPass) {
         $scope.errorMessage = '';
         if (fromPass) {
-            if ($scope.authData.password.trim() == '' || ($scope.authData.secondPassphrase.trim() == '' && $scope.secondPassphrase)) {
-                $scope.errorMessage = "Missing Passphrase or Second Passphrase";
+            if ($scope.authData.password.trim() == '') {
+                $scope.errorMessage = "Empty passphrase";
+                return;
+            } else if ($scope.authData.secondPassphrase.trim() == '' && $scope.secondPassphrase) {
+                $scope.errorMessage = "Empty second passphrase";
                 return;
             }
         } else {
@@ -135,9 +113,11 @@ angular.module('liskApp').controller('multisignatureModalController', ["$scope",
                 return '+' + element;
             })
         };
+
         if ($scope.secondPassphrase) {
             data.secondSecret = $scope.authData.secondPassphrase;
         }
+
         $scope.view.inLoading = true;
         $http.put('/api/multisignatures', data).then(function (response) {
             $scope.view.inLoading = false;
@@ -149,7 +129,6 @@ angular.module('liskApp').controller('multisignatureModalController', ["$scope",
                 }
                 multisignatureModal.deactivate();
             }
-
         });
     }
 

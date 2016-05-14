@@ -9,6 +9,7 @@ angular.module('liskApp').controller('addDappModalController', ["$scope", "$http
     $scope.passmode = false;
     $scope.errorMessage = "";
     $scope.checkSecondPass = false;
+    $scope.fee = 50000000000;
 
     $scope.close = function () {
         addDappModal.deactivate();
@@ -34,44 +35,31 @@ angular.module('liskApp').controller('addDappModalController', ["$scope", "$http
         }
     }
 
-
     $scope.newDapp = {
         name: "",
         description: "",
         category: 0,
         type: 0,
         tags: "",
-        git: "",
-        siaAscii: "",
-        siaIcon: "",
+        link: "",
         icon: ""
     };
+
     $scope.sendData = function (pass, withSecond) {
         var data = {
             name: $scope.newDapp.name,
             description: $scope.newDapp.description,
             category: $scope.newDapp.category,
             type: $scope.newDapp.type,
-            tags: $scope.newDapp.tags
+            tags: $scope.newDapp.tags,
         }
-        if (!!$scope.urlSiaMode || $scope.newDapp.icon.trim() == '') {
-        } else {
+
+        if ($scope.newDapp.icon.trim() != '') {
             data.icon = $scope.newDapp.icon.trim();
         }
 
-        if (!$scope.urlSiaMode || $scope.newDapp.siaIcon.trim() == '') {
-        } else {
-            data.siaIcon = $scope.newDapp.siaIcon.trim();
-        }
-
-        if ($scope.repository == 'sia' || $scope.newDapp.git.trim() == '') {
-        } else {
-            data.git = $scope.newDapp.git.trim();
-        }
-
-        if ($scope.repository != 'sia' || $scope.newDapp.siaAscii.trim() == '') {
-        } else {
-            data.siaAscii = $scope.newDapp.siaAscii.trim();
+        if ($scope.newDapp.link.trim() != '') {
+            data.link = $scope.newDapp.link.trim();
         }
 
         $scope.errorMessage = "";
@@ -104,70 +92,34 @@ angular.module('liskApp').controller('addDappModalController', ["$scope", "$http
                 }
                 addDappModal.deactivate();
             }
-
         });
     }
-    $scope.goToStep4 = function () {
-        $scope.errorMessage = "";
-        $scope.step = 4;
-        $scope.errorAppLink = false;
-    }
 
-    $scope.goToStep3 = function (invalid) {
-        if ($scope.dapp_data_form.$valid) {
-            $scope.dapp_data_form.submitted = false;
-            $scope.step = 3;
-        } else {
-            $scope.dapp_data_form.submitted = true;
-        }
-    }
-
-    $scope.goToStep5 = function () {
-        $scope.errorAppLink = $scope.repository == 'sia' ? $scope.newDapp.siaAscii.trim() == '' : $scope.newDapp.git.trim() == '';
-        // if ($scope.repository == 'sia') {
-        //     $scope.errorAppLink = $scope.errorAppLink || ($scope.newDapp.siaAscii.trim().indexOf('H4sIAAAJbogC')!=0);
-        // }
-        if (!$scope.errorAppLink) {
-            $scope.step = 5;
-        }
-    };
-
-    $scope.urlSiaMode = 0;
-
-    $scope.changeUrlSiaMode = function () {
-        $scope.urlSiaMode = $scope.urlSiaMode ? 0 : 1;
-    }
-
-    $scope.getUlrSiaText = function () {
-        return $scope.urlSiaMode ? gettextCatalog.getString('change to url link') : gettextCatalog.getString('change to SIA ASCII');
-    }
+    $scope.step = 1;
+    $scope.form = { dapp_data: {}, storage_data: {} };
 
     $scope.goToStep2 = function () {
         $scope.step = 2;
     }
 
-    $scope.step = 1;
-
-    $scope.repository = 'sia';
-
-    $scope.getRepositoryText = function () {
-        return $scope.repository == 'sia' ? $scope.newDapp.siaAscii : $scope.newDapp.git;
+    $scope.goToStep3 = function () {
+        if ($scope.form.dapp_data.$invalid) {
+            $scope.form.dapp_data.submitted = true;
+            $scope.step = 2;
+        } else {
+            $scope.step = 3;
+            $scope.form.dapp_data.submitted = false;
+        }
     }
 
-    $scope.getRepositoryName = function () {
-        return $scope.repository == 'sia' ? 'Sia' : 'GitHub';
-    }
-
-    $scope.getRepositoryHeaderText = function () {
-        return $scope.repository == 'sia' ? gettextCatalog.getString('Please set the Sia ASCII code below.') : gettextCatalog.getString('Please set the GitHub repository link below.');
-    }
-
-    $scope.getRepositoryHelpText = function () {
-        return $scope.repository == 'sia' ? gettextCatalog.getString('Please make sure you copy and paste the whole Sia ASCII code. Additionally please check that there were no characters added.') : gettextCatalog.getString('Please make sure you copy the complete repository link from GitHub. It ends in .git.');
-    }
-
-    $scope.selectRepository = function (name) {
-        $scope.repository = name;
+    $scope.goToStep4 = function () {
+        if ($scope.form.storage_data.$invalid) {
+            $scope.form.storage_data.submitted = true;
+            $scope.step = 3;
+        } else {
+            $scope.step = 4;
+            $scope.form.storage_data.submitted = false;
+        }
     }
 
 }]);

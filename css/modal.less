@@ -55,7 +55,6 @@
         font-size: @graph-heading;
         font-weight: 500;
       }
-
     }
     .modal-chapter {
       border-top: 1px solid @border-grey;
@@ -71,9 +70,13 @@
         cursor: pointer;
         &.open {
           &:after {
+            background-position: -85px -19px;
+          }
+        }
+        &.closed {
+          &:after {
             background-position: -85px -12px;
           }
-
         }
         &:after {
           display: block;
@@ -87,7 +90,6 @@
           background-image: url('@{images}/sprites/iconset.png');
           background-repeat: no-repeat;
           background-position: -85px -19px;
-
         }
       }
     }
@@ -170,7 +172,6 @@
                 border-radius: 2px;
                 width: 302px;
                 .lisk {
-
                   display: inline-block;
                   float: right;
                 }
@@ -192,10 +193,8 @@
             background-color: @even-grey;
           }
         }
-
       }
     }
-
     .modal-text {
       margin-top: 50px;
       display: block;
@@ -245,7 +244,6 @@
       font-size: 20px;
       font-weight: 500;
     }
-
   }
   .modal-content {
     width: 100%;
@@ -295,7 +293,6 @@
         font-size: 20px;
         font-weight: 500;
       }
-
     }
     .modal-chapter {
       border-top: 1px solid @border-grey;
@@ -311,9 +308,13 @@
         cursor: pointer;
         &.open {
           &:after {
+            background-position: -85px -19px;
+          }
+        }
+        &.closed {
+          &:after {
             background-position: -85px -12px;
           }
-
         }
         &:after {
           display: block;
@@ -327,7 +328,6 @@
           background-image: url('@{images}/sprites/iconset.png');
           background-repeat: no-repeat;
           background-position: -85px -19px;
-
         }
       }
     }
@@ -336,13 +336,26 @@
       background-color: @white;
     }
     .modal-body {
+      &.voting-fee {    
+        .fee-text {   
+          position: relative;   
+          right: 40px;    
+        }   
+      }
       &.voting-error {
         .pass-error {
-          padding: 20px;
+          padding-left: 65px;
           margin: 0;
+          top: -7px;
           &:after {
-            top: 18px;
-            right: 4px;
+            content: '';
+            height: 15px;
+            width: 17px;
+            display: block;
+            position: absolute;
+            background-image: url('@{images}/sprites/iconset.png');
+            background-position: 0 -69px;
+            left: 40px;
           }
         }
       }
@@ -359,7 +372,6 @@
           padding: 20px 30px;
           margin-bottom: 0;
           .list-group-item {
-
             margin-top: 20px;
             padding: 0;
             background-color: #eceff1 !important;
@@ -420,7 +432,6 @@
                 border-radius: 2px;
                 width: 302px;
                 .lisk {
-
                   display: inline-block;
                   float: right;
                 }
@@ -445,7 +456,6 @@
             background-color: @even-grey;
           }
         }
-
       }
     }
 
@@ -476,7 +486,7 @@
   .card-content, .card-reveal {
     overflow: hidden;
     padding: 0;
-    a.second-action {
+    .second-action:not(.btn):not(.btn-large):not(.btn-floating) {
       color: @black;
       text-decoration: none;
       padding: 20px 10px;
@@ -495,7 +505,7 @@
         font-weight: 300;
       }
     }
-    a.primary-action {
+    .primary-action:not(.btn):not(.btn-large):not(.btn-floating) {
       color: @blue;
       text-decoration: none;
       padding: 20px 10px;
@@ -508,12 +518,17 @@
       }
     }
   }
-
 }
 
 .app-modal .modal-content .modal-body .list-group .list-group-item {
-
   font-weight: 500
+}
+
+.modal-content {
+  p.error-container {
+    margin-top: 1em;
+    margin-left: 40px;
+  }
 }
 
 .modal-footer {
@@ -553,4 +568,16 @@
     background-color: @grey;
     color: @orange;
   }
+}
+
+.fee-text {   
+  position: relative;   
+  top: -10px;   
+  line-height: @content-text + 2;   
+  font-size: @content-text;   
+  color: @fee-text;   
+}
+
+.fee-second-passphrase {
+  top: 3px !important;
 }

@@ -7,7 +7,6 @@
     .panel-body {
       padding: 0 15px;
     }
-    paddin: 0 15px;
     & .media-list {
       .media {
         cursor: pointer;
@@ -80,7 +79,6 @@
       opacity: @font-opacity;
       font-size: 18px;
       font-weight: 500;
-      -webkit-text-stroke: 0.005px;
     }
   }
   table {
@@ -151,7 +149,7 @@
   &.widget-brown {
     color: @brown;
     border-top: 4px solid @brown;
-  }  
+  }
   &.widget-green {
     color: @green;
     border-top: 4px solid @green;
@@ -187,7 +185,6 @@
     display: block;
     font-size: @big-text;
     padding: 10px 0 20px;
-    -webkit-text-stroke: 0.2px;
   }
   .wg-data {
     &.version {
@@ -218,21 +215,6 @@
     color: @black;
     float: right;
     padding-top: 14px;
-    &.new-contacts {
-      opacity: 1;
-      &:before {
-        content: '';
-        display: inline-block;
-        width: 20px;
-        height: 15px;
-        margin-right: 8px;
-        background-image: url('@{images}/sprites/iconset.png');
-        background-position: -17px -69px;
-      }
-      & span {
-        opacity: @font-opacity;
-      }
-    }
   }
 }
 
@@ -243,6 +225,10 @@
   box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, .12);
   border-radius: @border-radius;
   margin-bottom: 20px;
+  &.price {
+    max-height: 300px;
+    min-height: 300px;
+  }
   &-heading {
     padding: 20px 0;
     color: @grey-text;
@@ -284,8 +270,12 @@
   }
   &-body {
     width: 100%;
-    padding: 20px 0;
+    padding: 20px 0px;
     position: relative;
+    &.price {
+      max-height: 239px;
+      min-width: 100%;
+    }
     .chart-legend {
       position: absolute;
       top: 50%;

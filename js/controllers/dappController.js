@@ -7,7 +7,6 @@ angular.module('liskApp').controller('dappController', ['$scope', 'viewFactory',
     $scope.view.loadingText = gettextCatalog.getString('Loading dapp');
     $scope.loading = true;
     $scope.installed = false;
-    $scope.showSiaInstall = false;
 
     $scope.getTags = function () {
         try {
@@ -18,22 +17,15 @@ angular.module('liskApp').controller('dappController', ['$scope', 'viewFactory',
         }
     }
 
-    $http.get('/api/dapps/siaenabled').then(function (response) {
-        if (response.data.success) {
-            $scope.showSiaInstall = response.data.enabled || $scope.dapp.siaAscii.trim() == "";
-        }
-    })
-
     $scope.isInstalled = function () {
         $http.get('/api/dapps/installedIds').then(function (response) {
             $scope.installed = (response.data.ids.indexOf($stateParams.dappId) >= 0);
             $scope.loading = false;
-            console.log("Loading: false");
         });
     }
 
     $scope.installingIds = [];
-    $scope.removingIds = [];
+    $scope.uninstallingIds = [];
     $scope.launchedIds = [];
 
     $scope.isInstalling = function () {
@@ -42,8 +34,8 @@ angular.module('liskApp').controller('dappController', ['$scope', 'viewFactory',
     $scope.isLaunched = function () {
         return ($scope.launchedIds.indexOf($stateParams.dappId) >= 0);
     }
-    $scope.isRemoving = function () {
-        return ($scope.removingIds.indexOf($stateParams.dappId) >= 0);
+    $scope.isUninstalling = function () {
+        return ($scope.uninstallingIds.indexOf($stateParams.dappId) >= 0);
     }
 
     $scope.getInstalling = function () {
@@ -54,10 +46,10 @@ angular.module('liskApp').controller('dappController', ['$scope', 'viewFactory',
         });
     };
 
-    $scope.getRemoving = function () {
-        $http.get("/api/dapps/removing").then(function (response) {
+    $scope.getUninstalling = function () {
+        $http.get("/api/dapps/uninstalling").then(function (response) {
             if (response.data.success) {
-                $scope.removingIds = response.data.removing;
+                $scope.uninstallingIds = response.data.uninstalling;
             }
         });
     };
@@ -80,10 +72,6 @@ angular.module('liskApp').controller('dappController', ['$scope', 'viewFactory',
 
     $http.get("/api/dapps/get?id=" + $stateParams.dappId).then(function (response) {
         $scope.dapp = response.data.dapp;
-        if ($scope.dapp.git) {
-            $scope.dapp.githublink = $scope.githubLink($scope.dapp.git);
-            console.log($scope.githublink);
-        }
         $scope.view.page = {title: $scope.dapp.name, previous: 'main.dappstore'};
         $scope.view.inLoading = false;
     });
@@ -98,12 +86,12 @@ angular.module('liskApp').controller('dappController', ['$scope', 'viewFactory',
         $http.post("/api/dapps/uninstall", data).then(function (response) {
             $scope.getInstalling();
             $scope.getLaunched();
-            $scope.getRemoving();
+            $scope.getUninstalling();
             if (response.data.success == true) {
                 $scope.installed = false;
             } else {
                 $scope.errorModal = errorModal.activate({
-                    title: 'Uninstalling Dapp error',
+                    title: gettextCatalog.getString('Failed to uninstall Dapp'),
                     error: response.data.error,
                     destroy: function () {
 
@@ -144,7 +132,7 @@ angular.module('liskApp').controller('dappController', ['$scope', 'viewFactory',
         $http.post("/api/dapps/install", data).then(function (response) {
             $scope.getInstalling();
             $scope.getLaunched();
-            $scope.getRemoving();
+            $scope.getUninstalling();
             if (response.data.success == true) {
                 $scope.installed = true;
                 if ($scope.dapp.type == 1) {
@@ -152,7 +140,7 @@ angular.module('liskApp').controller('dappController', ['$scope', 'viewFactory',
                 }
             } else {
                 $scope.errorModal = errorModal.activate({
-                    title: 'Installing Dapp error',
+                    title: gettextCatalog.getString('Failed to install dapp'),
                     error: response.data.error,
                     destroy: function () {
 
@@ -187,12 +175,12 @@ angular.module('liskApp').controller('dappController', ['$scope', 'viewFactory',
         $http.post("/api/dapps/launch", data).then(function (response) {
             $scope.getInstalling();
             $scope.getLaunched();
-            $scope.getRemoving();
+            $scope.getUninstalling();
             if (response.data.success == true) {
                 $scope.openDapp();
             } else {
                 $scope.errorModal = errorModal.activate({
-                    title: 'Launching Dapp error',
+                    title: gettextCatalog.getString('Failed to launch Dapp'),
                     error: response.data.error,
                     destroy: function () {
 
@@ -233,15 +221,10 @@ angular.module('liskApp').controller('dappController', ['$scope', 'viewFactory',
         link.remove();
     }
 
-    $scope.githubLink = function (git) {
-        return git.replace("git@", "https://").replace(".com:", ".com/").replace('.git', '');
-    }
-
     $scope.isInstalled();
-
     $scope.getInstalling();
     $scope.getLaunched();
-    $scope.getRemoving();
+    $scope.getUninstalling();
 
     $scope.$on('$destroy', function () {
         $interval.cancel($scope.stateDappInterval);
@@ -251,7 +234,7 @@ angular.module('liskApp').controller('dappController', ['$scope', 'viewFactory',
         if (data.indexOf('main.dapps') != -1) {
             $scope.getInstalling();
             $scope.getLaunched();
-            $scope.getRemoving();
+            $scope.getUninstalling();
         }
     });
 

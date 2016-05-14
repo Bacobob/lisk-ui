@@ -1,9 +1,8 @@
 <div class="row clearfix">
     <div class="col-xs-12">
         <div class="dapp-info clearfix">
-            <div class="cover-container"><img ng-if="!dapp.icon && !dapp.siaIcon" class="cover-image" src="https://placeholdit.imgix.net/~text?txtsize=33&txt=208%C3%97208&w=208&h=208">
+            <div class="cover-container"><img ng-if="!dapp.icon" class="cover-image" src="images/dappIcon.png">
                 <img ng-if="dapp.icon" class="cover-image" ng-src="{{dapp.icon}}">
-                <img ng-if="dapp.siaIcon" class="cover-image" ng-src="/api/dapps/icon?id={{dapp.transactionId}}">
             </div>
             <div class="info-container">
                 <div class="document-title">
@@ -14,23 +13,18 @@
                     <!-- <div class="document-subtitle">25 Mar 2015</div> -->
                 </div>
                 <div class="details-info-divider"></div>
-                <div ng-show="!loading && !installed && !isInstalling() && !isRemoving() && !isLaunched()" class="details-actions">
-                    <div ng-if="showSiaInstall">
+                <div ng-show="!loading && !installed && !isInstalling() && !isUninstalling() && !isLaunched()" class="details-actions">
+                    <div>
                         <a class="btn btn-sky-blue waves-effect waves-light" ng-click="installDapp()" ng-switch on="dapp.type">
                             <i class="mdi-file-file-download left"></i>
                             <span ng-switch-default><translate>INSTALL</translate></span>
                             <span ng-switch-when="1"><translate>DOWNLOAD</translate></span>
                         </a>
                     </div>
-                    <div ng-if="!showSiaInstall">
-                        <span class="btn btn-white">
-                            <span><translate>Sia required</translate></span>
-                        </span>
-                    </div>
                     <!-- <a class="btn btn-white waves-effect left-margin-14">SHARE</a> -->
-                    <a ng-show="dapp.git" href="{{dapp.githublink}}" target="_blank" class="btn btn-white waves-effect pull-right source"><translate>SOURCE CODE</translate></a>
+                    <a ng-show="dapp.link" href="{{dapp.link}}" target="_blank" class="btn btn-white waves-effect pull-right source"><translate>SOURCE CODE</translate></a>
                 </div>
-                <div ng-show="!loading && installed && !isInstalling() && !isRemoving() && !isLaunched()" class="details-actions">
+                <div ng-show="!loading && installed && !isInstalling() && !isUninstalling() && !isLaunched()" class="details-actions">
                     <a class="btn btn-sky-blue waves-effect waves-light" ng-click="runDApp()" ng-switch on="dapp.type">
                         <i class="mdi-file-file-download left"></i>
                         <span ng-switch-default><translate>LAUNCH</translate></span>
@@ -39,7 +33,7 @@
                     <!-- <a class="btn btn-white waves-effect left-margin-14">SHARE</a> -->
                     <a ng-show="dapp.git" href="{{dapp.githublink}}" target="_blank" class="btn btn-white waves-effect pull-right source"><translate>SOURCE CODE</translate></a>
                 </div>
-                <div ng-show="!isInstalling() && !isRemoving() && isLaunched()" class="details-actions">
+                <div ng-show="!isInstalling() && !isUninstalling() && isLaunched()" class="details-actions">
                     <a class="btn btn-sky-blue waves-effect waves-light" ng-click="openDapp(dapp.type)" ng-switch on="dapp.type">
                         <i class="mdi-file-file-download left"></i>
                         <span ng-switch-default><translate>OPEN</translate></span>
@@ -48,7 +42,7 @@
                     <!-- <a class="btn btn-white waves-effect left-margin-14">SHARE</a> -->
                     <a ng-show="dapp.git" href="{{dapp.githublink}}" target="_blank" class="btn btn-white waves-effect pull-right source"><translate>SOURCE CODE</translate></a>
                 </div>
-                <div ng-show="(isInstalling() || isRemoving()) && !isLaunched()" class="details-actions">
+                <div ng-show="(isInstalling() || isUninstalling()) && !isLaunched()" class="details-actions">
                     <div class="progress" style="display: inline-block; width: 120px;">
                         <div class="indeterminate"></div>
                     </div>
@@ -70,7 +64,7 @@
                     </a>
                 </div>
                 <div class="details-info-divider"></div>
-                <div class="reason-set">
+                <!--<div class="reason-set">
                     <span class="stars-container">
                         <div class="reason-set-star-rating">
                             <div class="small-star star-rating-non-editable-container" aria-label="Average Rating: 4.3 out of 5">
@@ -79,22 +73,16 @@
                             <div class="stars-count"><translate>(1449)</translate></div>
                         </div>
                     </span>
-                </div>
+                </div>-->
             </div>
         </div>
     </div>
 </div>
-<div class="row clearfix">
+<div class="row clearfix" ng-show="dapp.description">
     <div class="col-xs-12">
         <div class="dapp-info clearfix">
             <div class="description">
                 <h1 class="heading">{{'Description'|translate}}</h1>
-                <div style="color: #f34235; border-color: #f34235; padding: 10px; border: 1px solid; border-radius: 2px;">
-                    <b><translate>Attention!</translate></b>
-                    <span style="opacity: 0.7;">
-                        <translate>Please be aware, Lisk decentralized applications do not currently run within a sandboxed virtual machine. This means you are potentially vulnerable to malicious application behaviour. Before installing any new application, we recommend checking the source code or asking the Lisk community for further verification.<br>We will enable sandboxing of decentralized applications with the next Lisk update.</translate>
-                    </span>
-                </div>
                 <div class="text-body" ng-class="{'expanded': showMore}">
                     <p>{{dapp.description | cut:true:100:' ...':!showMore}}</p>
                 </div>

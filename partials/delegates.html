@@ -10,7 +10,7 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="#" class="green-link" ng-click="vote()" ng-disabled="voteList.length==0"><i class="mdi-action-favorite-outline left"></i><translate>vote</translate></a>
+                    <a href="#" class="green-link" ng-click="vote()" ng-disabled="voteList.length==0"><i class="mdi-action-done left"></i><translate>vote</translate></a>
                 </li>
             </ul>
         </div>
@@ -40,7 +40,7 @@
                         <span ng-show="delegate.productivity">{{(delegate.productivity)}}%</span>
                         <span ng-show="!delegate.productivity">-</span>
                     </td>
-                    <td data-title="tableTopDelegates.cols.vote" sortable="'vote'">{{getApproval(delegate.vote) | number: 2}}%</td>
+                    <td data-title="tableTopDelegates.cols.vote" sortable="'vote'">{{delegate.approval | number: 2}}%</td>
                     <td data-title="''">
                         <div class="dropdown-more-group" dropdown>
                             <span class="table-more-actions" dropdown-toggle>
@@ -48,7 +48,7 @@
                             </span>
                             <ul class="list-group" role="menu">
                                 <li class="list-group-item">
-                                    <a href="#" ng-click="sendTransaction(delegate.address)"><translate>Send LISK</translate></a>
+                                    <a href="#" class="send-lisk" ng-click="sendTransaction(delegate.address)"><translate>Send LISK</translate></a>
                                 </li>
                                 <!-- <li class="list-group-item"><a href="#">Send Message</a></li> -->
                                 <div class="divider-wrap">
@@ -60,12 +60,12 @@
                                 <li class="list-group-item">
                                     <a href="#" clip-copy="delegate.username"><translate>Copy Name</translate></a>
                                 </li>
-                                <div class="divider-wrap">
+                                <!--<div class="divider-wrap">
                                     <li class="divider"></li>
-                                </div>
-                                <li class="list-group-item">
+                                </div>-->
+                                <!--<li class="list-group-item">
                                     <a href="#" ng-click="addContact(delegate.address)"><translate>Add as Contact</translate></a>
-                                </li>
+                                </li>-->
                                 <!-- <li class="list-group-item"><a href="#">See Voters</a></li> -->
                             </ul>
                         </div>
@@ -90,7 +90,7 @@
         <div class="panel panel-default paginated">
             <div class="panel-heading">
                 <h2>{{'Standby Delegates'|translate}}</h2>
-                <div class="plain-text">{{countStandby}} in Total</div>
+                <div class="plain-text"><translate>{{countStandby}} in Total</translate></div>
             </div>
             <table ng-table="tableStandbyDelegates" border="0" width="100%" cellpadding="0" cellspacing="0" template-pagination="custom/pager">
                 <tr ng-repeat="delegate in $data" ng-class="{'voted' : (delegates.voted(delegate.publicKey) || unconfirmedTransactions.inList(delegate.publicKey)), 'checked': voteList.inList(delegate.publicKey)}">
@@ -109,7 +109,7 @@
                         <span ng-show="delegate.productivity">{{(delegate.productivity)}}%</span>
                         <span ng-show="!delegate.productivity">-</span>
                     </td>
-                    <td data-title="tableStandbyDelegates.cols.vote" sortable="'vote'">{{getApproval(delegate.vote) | number: 2}}%</td>
+                    <td data-title="tableStandbyDelegates.cols.vote" sortable="'vote'">{{delegate.approval | number: 2}}%</td>
                     <td data-title="''">
                         <div class="dropdown-more-group" dropdown>
                             <span class="table-more-actions" dropdown-toggle>
@@ -132,9 +132,9 @@
                                 <div class="divider-wrap">
                                     <li class="divider"></li>
                                 </div>
-                                <li class="list-group-item">
+                                <!-- <li class="list-group-item">
                                     <a href="#" ng-click="addContact(delegate.address)"><translate>Add as Contact</translate></a>
-                                </li>
+                                </li> -->
                                 <!-- <li class="list-group-item"><a href="#">See Voters</a></li> -->
                             </ul>
                         </div>

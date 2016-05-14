@@ -20,17 +20,14 @@ angular.module('liskApp').controller('dappsCategoryController', ['$scope', 'view
         var currentIndex = array.length, temporaryValue, randomIndex;
 
         while (0 !== currentIndex) {
-
             // Pick a remaining element...
             randomIndex = Math.floor(Math.random() * currentIndex);
             currentIndex -= 1;
-
             // And swap it with the current element.
             temporaryValue = array[currentIndex];
             array[currentIndex] = array[randomIndex];
             array[randomIndex] = temporaryValue;
         }
-
         return array;
     }
 
@@ -58,12 +55,10 @@ angular.module('liskApp').controller('dappsCategoryController', ['$scope', 'view
         }, 2000); // Delay 2000 ms
     })
 
-
     $scope.searchDappText = function () {
         if ($scope.category == 'Installed') {
             if ($scope.searchDapp.searchForDapp.trim() != '') {
                 $http.get("/api/dapps/search?q=" + $scope.searchDapp.searchForDapp + "&installed=1").then(function (response) {
-                    console.log("here");
                     $scope.dapps = $scope.shuffle(response.data.dapps);
                     $scope.searchDapp.inSearch=false;
                     $scope.view.inLoading = false;
@@ -96,7 +91,6 @@ angular.module('liskApp').controller('dappsCategoryController', ['$scope', 'view
             }
         }
     };
-
 
     $scope.$on('updateControllerData', function (event, data) {
         if (data.indexOf('main.dapps') != -1) {

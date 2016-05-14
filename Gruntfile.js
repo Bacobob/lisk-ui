@@ -5,7 +5,7 @@ module.exports = function (grunt) {
         "js/ui-bootstrap.js"
     ];
 
-    var withoutBrowserify = ['static/js/br_app.js', 'static/js/translations.js', 'bower_components/underscore/underscore.js', 'bower_components/materialize/bin/materialize.js'];
+    var withoutBrowserify = ['static/js/br_app.js', 'static/js/translations.js', 'bower_components/underscore/underscore.js', 'bower_components/materialize/dist/js/materialize.js'];
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -39,10 +39,10 @@ module.exports = function (grunt) {
                 },
                 files: {
                     "static/css/app.css": [
-                        "bower_components/angular-chart.js/dist/angular-chart.css",
-                        "node_modules/materialize-css/bin/materialize.css",
-                        "node_modules/bootstrap/dist/css/bootstrap.css",
-                        "bower_components/angular-modal/modal.css",
+                        "node_modules/angular-chart.js/dist/angular-chart.css",
+                        "bower_components/materialize/dist/css/materialize.css",
+                        "bower_components/bootstrap/dist/css/bootstrap.css",
+                        "node_modules/angular-modal/modal.css",
                         "node_modules/ng-table/ng-table.css",
                         "tmp/app.css"
                     ]
@@ -87,6 +87,34 @@ module.exports = function (grunt) {
                     "static/js/app.js": files
                 }
             }
+        },
+        watch: {
+          js: {
+              files: ["js/**/*.js"],
+              tasks: ["concat:release", "browserify", "concat:withoutBrowserify", "uglify:release"]
+          },
+          css: {
+             files: ["css/**/*.less"],
+             tasks: ["less", "cssmin"]
+          },
+          po_extract: {
+               files: ["partials/**/*.html"],
+               tasks: ["nggettext_extract"]
+          },
+          po_compile: {
+               files: ["po/*.mo", "po/*.po", "template.pot"],
+               tasks: ["nggettext_compile"]
+          },
+          livereload: {
+              options: {
+                  livereload: 35729
+              },
+              files: [
+                  "partials/{,**/}*.html",
+                  "static/css/{,**/}*.css",
+                  "static/js/{,**/}*.js"
+              ]
+          }
         }
     });
 
@@ -95,8 +123,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-contrib-cssmin");
     grunt.loadNpmTasks("grunt-contrib-less");
     grunt.loadNpmTasks("grunt-contrib-uglify");
-    grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks("grunt-browserify");
+    grunt.loadNpmTasks("grunt-contrib-watch");
 
-    grunt.registerTask("default", ["nggettext_extract", "nggettext_compile", "less", "cssmin", "concat:release", 'browserify', "concat:withoutBrowserify"]);
-    grunt.registerTask("release", ["default", "uglify:release"]);
+    grunt.registerTask("default", ["watch"]);
+    grunt.registerTask("release", ["nggettext_extract", "nggettext_compile", "less", "cssmin", "concat:release", "browserify", "concat:withoutBrowserify", "uglify:release"]);
 };

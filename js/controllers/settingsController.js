@@ -19,17 +19,13 @@ angular.module('liskApp').controller('settingsController', ['$scope', '$rootScop
     }
 
     $scope.checkEnabledMultisign = function () {
-        if (userService.multisignatures) {
-            if (userService.multisignatures.length) {
-                return true;
-            }
+        if (userService.multisignatures && userService.multisignatures.length) {
+            return true;
+        } else if (userService.u_multisignatures && userService.u_multisignatures.length) {
+            return true;
+        } else {
+            return false;
         }
-        if (userService.u_multisignatures) {
-            if (userService.u_multisignatures.length) {
-                return true;
-            }
-        }
-        return false;
     }
 
     $scope.settings.enabledMultisign = $scope.checkEnabledMultisign();
@@ -38,10 +34,11 @@ angular.module('liskApp').controller('settingsController', ['$scope', '$rootScop
         $scope.settings.enabledMultisign = $scope.checkEnabledMultisign();
     }, 1000);
 
-
     $scope.setMultisignature = function () {
-        if ($scope.settings.enabledMultisign) {
+        if ($scope.checkEnabledMultisign()) {
             return;
+        } else {
+            $scope.settings.enabledMultisign = true;
         }
         $interval.cancel($scope.updateSettings);
         $scope.multisignatureModal = multisignatureModal.activate({
@@ -50,7 +47,6 @@ angular.module('liskApp').controller('settingsController', ['$scope', '$rootScop
                 $scope.settings.updateSettings = $interval(function () {
                     $scope.enabledMultisign = $scope.checkEnabledMultisign();
                 }, 1000);
-
             }
         });
     }
